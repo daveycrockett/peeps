@@ -68,7 +68,7 @@ possible commands are who, add, adds, note, notes"
       echo "usage: orgs who <search-string>"
       return -1
     fi
-    echo "SELECT * FROM orgs WHERE UPPER(acronym) LIKE UPPER('%$2%') OR LOWER(name) LIKE LOWER('%$2%');" | sqlite3 $PEEPSDB
+    echo "SELECT * FROM orgs WHERE UPPER(acronym) LIKE UPPER('%$2%') OR LOWER(name) LIKE LOWER('%$2%');" | sqlite3 -column -header $PEEPSDB
   fi
 
   if [[ ($1 == 'adds' || $1 == 'notes' ) ]];
@@ -150,7 +150,7 @@ possible commands are whoin, add, adds, who, note, notes"
       echo "usage: peeps whoin <acronym>"
       return -1
     fi
-    echo "SELECT * FROM peeps WHERE UPPER(acronym) LIKE UPPER('%$2%') OR LOWER(orgname) LIKE LOWER('%$2%');" | sqlite3 $PEEPSDB
+    echo "SELECT * FROM peeps WHERE UPPER(acronym) LIKE UPPER('%$2%') OR LOWER(orgname) LIKE LOWER('%$2%');" | sqlite3 -column -header $PEEPSDB
   fi
   if [ $1 == 'who' ];
   then
@@ -159,7 +159,7 @@ possible commands are whoin, add, adds, who, note, notes"
       echo "usage: peeps who <search-string>"
       return -1
     fi
-    echo "SELECT * FROM peeps WHERE LOWER(name) LIKE LOWER('%$2%');" | sqlite3 $PEEPSDB
+    echo "SELECT * FROM peeps WHERE LOWER(name) LIKE LOWER('%$2%');" | sqlite3 -column -header $PEEPSDB
   fi
   if [[ ($1 == 'adds' || $1 == 'notes') ]];
   then
@@ -190,20 +190,22 @@ possible commands are whoin, add, adds, who, note, notes"
 
     echo -n "notes: "
     read $silent notes
-    notes=$(empty_to_null "$notes")
     silent_newline $silent
+    local notesval=''
+    if [ ! -z "$notes" ]; then
+      notesval=" || '
 
+' || DATE() || '
+' || '$notes'"
+    fi
     echo "
       INSERT OR REPLACE INTO peeps (name, email, acronym, orgname, notes)
       VALUES (
         LOWER($name),
         COALESCE(LOWER($email), (SELECT email FROM peeps WHERE name=LOWER($name))),
         COALESCE(UPPER($acronym), (SELECT acronym FROM peeps WHERE name=LOWER($name))),
-        COALESCE(LOWER($org), (SELECT orgname FROM peeps WHERE name=LOWER($name))),
-        COALESCE((SELECT notes FROM peeps WHERE name=LOWER($name)),'') || '
-
-' || DATE() || '
-' || $notes
+        COALESCE(LOWER($org), (SELECT orgname FROM peeps WHERE name=LOWER($name)), (SELECT name FROM orgs WHERE acronym=UPPER($acronym))),
+        COALESCE((SELECT notes FROM peeps WHERE name=LOWER($name)),'') $notesval
       );
     " | sqlite3 $PEEPSDB
     if [[ ( $acronym != "NULL" ) ]];
