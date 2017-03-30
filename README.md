@@ -3,7 +3,7 @@ A lightweight contact and org/acronym tracker
 
 Do you find yourself working at a job where you're drowning in alphabet soup?  Too much network taxing your limited memory resources?  Do you go to meetings where it's acceptable to have a laptop open, and everyone only half paying attention is the norm?
 
-If you answered yes to all these questions, you're in luck!  peeps is a lightweight set of commands for the terminal that allow you to discretely lookup your past notes on the most recent name-drop, while appearing to just be taking notes or firing off an email.
+If you answered yes to all these questions, you're in luck!  peeps is a lightweight set of commands for the terminal that allow you to discreetly lookup your past notes on the most recent name-drop, while appearing to just be taking notes or firing off an email.
 
 ### Requirements
 
