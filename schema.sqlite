@@ -1,0 +1,14 @@
+CREATE TABLE peeps (
+   name varchar(128) primary key,
+   email varchar(128),
+   orgname varchar(128),
+   acronym varchar(10),
+   notes text
+);
+
+CREATE TABLE orgs (
+   name varchar(128),
+   acronym varchar(10) primary key,
+   notes text
+);
+
