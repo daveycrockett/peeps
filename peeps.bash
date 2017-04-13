@@ -227,6 +227,6 @@ possible commands are whoin, add, adds, who, note, notes"
 
     echo "UPDATE peeps SET notes = (SELECT COALESCE(notes, '') FROM peeps WHERE LOWER(name) = LOWER('$2')) || '
 ' || DATE() || '
-$notes';" | sqlite3 $PEEPSDB
+$notes' WHERE LOWER(name) = LOWER('$2');" | sqlite3 $PEEPSDB
   fi
 }
