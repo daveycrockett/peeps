@@ -104,7 +104,7 @@ possible commands are who, add, adds, note, notes"
 
     echo "UPDATE orgs SET notes = (SELECT COALESCE(notes, '') FROM orgs WHERE UPPER(acronym) = UPPER('$2')) || '
 ' || DATE() || '
-$notes';" | sqlite3 $PEEPSDB
+$notes' WHERE UPPER(acronym) = UPPER('$2');" | sqlite3 $PEEPSDB
   fi
 }
 
